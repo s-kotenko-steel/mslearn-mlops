@@ -5,6 +5,7 @@ import glob
 import os
 
 import pandas as pd
+import numpy as np
 
 from sklearn.linear_model import LogisticRegression
 
@@ -12,7 +13,7 @@ from sklearn.linear_model import LogisticRegression
 # define functions
 def main(args):
     # TO DO: enable autologging
-
+    mlflow.autolog()
 
     # read data
     df = get_csvs_df(args.training_data)
@@ -34,7 +35,21 @@ def get_csvs_df(path):
 
 
 # TO DO: add function to split data
-def split_data():
+def split_data(df, test_size=0.30, random_state=0):
+    # Extract features and labels from the DataFrame
+    X, y = df[['Pregnancies', 'PlasmaGlucose', 'DiastolicBloodPressure', 'TricepsThickness', 'SerumInsulin', 'BMI', 'DiabetesPedigree', 'Age']].values, df['Diabetic'].values
+    
+    # Print the length of the feature array
+    print("Total data points:", len(X))
+    
+    # Print the unique classes and their counts in the label array
+    print(np.unique(y, return_counts=True))
+    
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+    
+    return X_train, X_test, y_train, y_test
+    
 
 def train_model(reg_rate, X_train, X_test, y_train, y_test):
     # train model
